@@ -1,48 +1,46 @@
 name: Playwright E2E Tests
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, feat/* ]
   pull_request:
     branches: [ main, master ]
+
 jobs:
   test:
-    timeout-minutes: 15
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password123
-          POSTGRES_DB: automation_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
+    
     - uses: actions/setup-node@v4
       with:
-        node-version: 18
-        
+        node-version: lts/*
+
     - name: Install dependencies
-      run: npm install
-      
+      run: npm ci
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
+    
+    - name: Create .env file
+      run: |
+        echo "DB_USER=postgres" >> .env
+        echo "DB_PASSWORD=your_secure_password" >> .env
+        echo "DB_NAME=postgres" >> .env
+        echo "DB_PORT=5433" >> .env
+
+    - name: Start Services (Docker Compose)
+      run: docker-compose up -d --build
+
+    - name: Wait for Services
+      run: sleep 15
+
+    # ------------------------------------
+
     - name: Run Playwright tests
-      env:
-        DB_USER: postgres
-        DB_PASSWORD: password123
-        DB_HOST: localhost
-        DB_NAME: automation_db
-        DB_PORT: 5432
       run: npx playwright test
 
     - uses: actions/upload-artifact@v4
