@@ -8,7 +8,7 @@ test('Real E2E: Create user via Store API and verify persistence in DB', async (
     email: `basem_${timeStamp}@test.com`
   };
 
-  const apiResponse = await request.post('http://localhost:3000/api/users', {
+  const apiResponse = await request.post('http://127.0.0.1:3000/api/users', {
     data: newUser
   });
 
