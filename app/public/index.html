@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basem Automation Store</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+    <h1>Welcome to Basem Store</h1>
+    <div style="border: 1px solid #ccc; padding: 20px; width: 300px;">
+        <h3>Register User</h3>
+        <input type="text" id="username" placeholder="Username" style="width: 100%; margin-bottom: 10px;"><br>
+        <input type="email" id="email" placeholder="Email" style="width: 100%; margin-bottom: 10px;"><br>
+        <button onclick="register()" style="width: 100%; background: #28a745; color: white; border: none; padding: 10px;">Create User</button>
+    </div>
+    <div id="message" style="margin-top: 20px;"></div>
+
+    <script>
+        async function register() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            
+            const res = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email })
+            });
+            
+            const data = await res.json();
+            if(res.status === 201) {
+                document.getElementById('message').innerHTML = `<span style="color:green">Created: ${data.username} (ID: ${data.id})</span>`;
+            } else {
+                document.getElementById('message').innerHTML = `<span style="color:red">Error: ${data.error}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
