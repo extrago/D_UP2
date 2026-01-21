@@ -13,32 +13,30 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - uses: actions/setup-node@v4
       with:
-        node-version: lts/*
+        node-version: 18
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
-    
     - name: Create .env file
       run: |
         echo "DB_USER=postgres" >> .env
         echo "DB_PASSWORD=your_secure_password" >> .env
         echo "DB_NAME=postgres" >> .env
         echo "DB_PORT=5433" >> .env
+        echo "DB_HOST=localhost" >> .env
 
-    - name: Start Services (Docker Compose)
-      run: docker-compose up -d --build
+    - name: Start Services
+      run: docker compose up -d --build
 
     - name: Wait for Services
-      run: sleep 15
-
-    # ------------------------------------
+      run: sleep 30
 
     - name: Run Playwright tests
       run: npx playwright test
