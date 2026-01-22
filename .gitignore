@@ -2,8 +2,12 @@
 # Playwright
 node_modules/
 /test-results/
+allure-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+postgres-data/
+pgdata/
+*.log
 /playwright/.auth/
 .env

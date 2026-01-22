@@ -13,6 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: 18
@@ -22,6 +23,11 @@ jobs:
 
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
+    - name: Clean up conflicting DB data
+      run: |
+        sudo rm -rf pgdata
+        sudo rm -rf postgres-data
 
     - name: Create .env file
       run: |
@@ -40,12 +46,12 @@ jobs:
     - name: Wait for Services
       run: sleep 30
 
-    - name: Debug DB Logs on Failure
-      if: failure()
-      run: docker logs automation_pg_container
-
     - name: Run Playwright tests
       run: npx playwright test
+
+    - name: Debug DB on Failure
+      if: failure()
+      run: docker logs automation_pg_container
 
     - uses: actions/upload-artifact@v4
       if: always()
