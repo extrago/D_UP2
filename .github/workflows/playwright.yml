@@ -40,10 +40,11 @@ jobs:
 
     - run: npx playwright test
 
-    - if: failure()
+    - name: Show Docker logs on failure
+      if: failure()
       run: |
-        docker logs automation_pg_container
-        docker ps -a
+        docker compose ps -a
+        docker compose logs
 
     - uses: actions/upload-artifact@v4
       if: always()
